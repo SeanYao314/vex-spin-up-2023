@@ -5,28 +5,28 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {-15, -16}
+  {-3, -1}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{6, 5}
+  ,{8, 9}
 
   // IMU Port
   ,20
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
-  ,2.5
+  ,3.25
 
   // Cartridge RPM
   //   (or tick per rotation if using tracking wheels)
-  ,1200
+  ,600
 
   // External Gear Ratio (MUST BE DECIMAL)
   //    (or gear ratio of tracking wheel)
   // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
   // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,2
+  ,1.6666666
 
 
   // Uncomment if using tracking wheels
@@ -130,7 +130,9 @@ void autonomous() {
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-  ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+  // ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
+  turn_example();
+
 }
 
 
@@ -148,6 +150,8 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+pto_list = {10,-2};
+
 void opcontrol() {
   // This is preference to what you like to drive on.
   chassis.set_drive_brake(MOTOR_BRAKE_COAST);
