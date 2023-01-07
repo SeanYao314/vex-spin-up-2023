@@ -73,6 +73,17 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+
+void flywheel_drive(int);
+
+
+void intake_drive(int);
+
+void indexer_drive(bool);
+
+void intake_move_drive(bool);
+
+void changer_drive(bool);
 #ifdef __cplusplus
 }
 #endif

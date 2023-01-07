@@ -23,6 +23,7 @@ const int SWING_SPEED = 90;
 // It's best practice to tune constants when the robot is empty and with heavier game objects, or with lifts up vs down.
 // If the objects are light or the cog doesn't change much, then there isn't a concern here.
 
+
 void default_constants() {
   chassis.set_slew_min_power(80, 80);
   chassis.set_slew_distance(7, 7);
@@ -82,9 +83,6 @@ void drive_example() {
   chassis.set_drive_pid(-12, DRIVE_SPEED);
   chassis.wait_drive();
 }
-
-
-
 ///
 // Turn Example
 ///
@@ -244,3 +242,12 @@ void interfered_example() {
 // . . .
 // Make your own autonomous functions here!
 // . . .
+
+void left_side_auton() {
+  chassis.set_drive_pid(2,DRIVE_SPEED);
+  flywheel_drive(-12000);
+}
+
+void right_side_auton() {
+
+}
