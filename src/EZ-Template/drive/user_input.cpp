@@ -210,11 +210,14 @@ void Drive::tank() {
   modify_curve_with_controller();
 
   // Put the joysticks through the curve function
-  int l_stick = left_curve_function(master.get_analog(ANALOG_LEFT_Y));
-  int r_stick = left_curve_function(master.get_analog(ANALOG_RIGHT_Y));
+  int l = left_curve_function(master.get_analog(ANALOG_LEFT_Y));
+  int r = left_curve_function(master.get_analog(ANALOG_RIGHT_Y));
 
   // Set robot to l_stick and r_stick, check joystick threshold, set active brake
-  joy_thresh_opcontrol(l_stick*202/127, r_stick*200/127);
+  float d = 0.051;
+  float lCurve = (-log2((254)/(l+127)-0.999))/d;
+  float rCurve = (-log2((254)/(r+127)-0.999))/d;
+  joy_thresh_opcontrol(l,r);
 }
 
 // Arcade standard

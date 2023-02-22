@@ -5,18 +5,18 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {-3, -1}
+  {-12,-2}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{8, 9}
+  ,{-19, 10}
 
   // IMU Port
   ,20
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
-  ,3.25
+  ,2.75
 
   // Cartridge RPM
   //   (or tick per rotation if using tracking wheels)
@@ -26,7 +26,7 @@ Drive chassis (
   //    (or gear ratio of tracking wheel)
   // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
   // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,1.66666666
+  ,1.25
 
 
   // Uncomment if using tracking wheels
@@ -47,18 +47,18 @@ Drive chassis (
 Drive ptochassis {
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {-3, -2, -1}
+  {-12,-2,13}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{8, 9, 10}
+  ,{-17, 19, 10}
 
   // IMU Port
   ,20
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
-  ,3.25
+  ,2.75
 
   // Cartridge RPM
   //   (or tick per rotation if using tracking wheels)
@@ -68,7 +68,49 @@ Drive ptochassis {
   //    (or gear ratio of tracking wheel)
   // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
   // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
-  ,1.66666666
+  ,1.33333333
+
+
+  // Uncomment if using tracking wheels
+  /*
+  // Left Tracking Wheel Ports (negative port will reverse it!)
+  // ,{1, 2} // 3 wire encoder
+  // ,8 // Rotation sensor
+
+  // Right Tracking Wheel Ports (negative port will reverse it!)
+  // ,{-3, -4} // 3 wire encoder
+  // ,-9 // Rotation sensor
+  */
+
+  // Uncomment if tracking wheels are plugged into a 3 wire expander
+  // 3 Wire Port Expander Smart Port
+  // ,1
+};
+Drive ptochassis2 {
+  // Left Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  {-12,-2,11,3}
+
+  // Right Chassis Ports (negative port will reverse it!)
+  //   the first port is the sensored port (when trackers are not used!)
+  ,{19, 10,-17, 9}
+
+  // IMU Port
+  ,20
+
+  // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
+  //    (or tracking wheel diameter)
+  ,2.75
+
+  // Cartridge RPM
+  //   (or tick per rotation if using tracking wheels)
+  ,600
+
+  // External Gear Ratio (MUST BE DECIMAL)
+  //    (or gear ratio of tracking wheel)
+  // eg. if your drive is 84:36 where the 36t is powered, your RATIO would be 2.333.
+  // eg. if your drive is 36:60 where the 60t is powered, your RATIO would be 0.6.
+  ,1.3333333
 
 
   // Uncomment if using tracking wheels
@@ -87,23 +129,24 @@ Drive ptochassis {
   // ,1
 };
 
-int FLYWHEEL_RIGHT = 12;
-int FLYWHEEL_LEFT  = 11;
-int INTAKE_RIGHT  = 10;
-int INTAKE_LEFT   = 2;
-const std::uint8_t INDEXER = 'A';
-const std::uint8_t PTO = 'B';
-const std::uint8_t ENDGAME = 'C';
+const int CATA_LEFT  = 3;
+const int CATA_RIGHT   = 9;
 
-pros::Motor intake_right(INTAKE_RIGHT, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor intake_left(INTAKE_LEFT, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor flywheel_left(FLYWHEEL_LEFT, pros::E_MOTOR_GEARSET_36, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor flywheel_right(FLYWHEEL_RIGHT, pros::E_MOTOR_GEARSET_36, true, pros::E_MOTOR_ENCODER_DEGREES);
-pros::ADIDigitalOut pto('B');
-pros::ADIDigitalOut indexer('A');
+const int CATA_BACK_LEFT = 13;
+const int CATA_BACK_RIGHT = 17;
+
+pros::Motor cata_right(CATA_RIGHT, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata_left(CATA_LEFT, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata_back_right(CATA_BACK_RIGHT, pros::E_MOTOR_GEARSET_06, true, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata_back_left(CATA_BACK_LEFT, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
+
+pros::ADIDigitalOut ptoMain('A');
+pros::ADIDigitalOut ptoSecondary('B');
 pros::ADIDigitalOut changer('F');
 pros::ADIDigitalOut endgame('E');
 pros::ADIDigitalOut intakeMover('C');
+
+pros::ADIDigitalIn limitSwitch('G');
 
 
 /**
@@ -189,8 +232,7 @@ void autonomous() {
   chassis.reset_drive_sensor(); // Reset drive sensors to 0
   chassis.set_drive_brake(MOTOR_BRAKE_HOLD); // Set motors to hold.  This helps autonomous consistency.
 
-  // ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector.
-  left_side_auton();
+  // ez::as::auton_selector.call_selected_auton(); // Calls selected auton from autonomous selector
 
 }
 
@@ -210,19 +252,17 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-void flywheel_drive(int speed) {
-    flywheel_right.move_voltage(-speed);
-    flywheel_left.move_voltage(speed);
+
+
+void cata_drive(int speed) {
+  cata_left.move_voltage(-speed);
+  cata_right.move_voltage(speed);
+}
+void cata_drive_secondary(int speed) {
+  cata_back_left.move_voltage(-speed);
+  cata_back_right.move_voltage(-speed);
 }
 
-void intake_drive(int speed) {
-  intake_left.move_voltage(speed);
-  intake_right.move_voltage(speed);
-}
-
-void indexer_drive(bool index) {
-  indexer.set_value(index);
-}
 
 void intake_move_drive(bool intake) {
   intakeMover.set_value(intake);
@@ -231,85 +271,39 @@ void intake_move_drive(bool intake) {
 void changer_drive(bool change) {
   changer.set_value(change);
 }
+
+
 void opcontrol() {
+  int cataPos;
+  int ptoCurrent = 4;
+  while(true) {
 
-	bool shootingMode = false;
-  bool pto_enganged = false;
-  bool indexing;
-  bool intakeMove = false;
-  int lastFly = 0;
-  // This is preference to what you like to drive on.
-  chassis.set_drive_brake(MOTOR_BRAKE_COAST);
-  ptochassis.set_drive_brake(MOTOR_BRAKE_COAST);
+    cataPos = limitSwitch.get_value();
+    if(ptoCurrent == 4 ) {
+      chassis.tank(); //automatically start out with 4m chassis / 4m intake and 4m cata, maybe change idk -- this is what we run during auton and skills(probably) because we don't have to deal with defence, also what we run while no one is playing defence on us. more powerful intake and cata but 66% power of 6m drive
+    } else if(ptoCurrent == 6) {
+      ptochassis.tank(); //this is 6m drive and 2m cata/intake, used during majority of comp operator control games. drive is 50% more powerful than 4m drive however intake and cata power is halved -- this isn't that big of a deal since we don't max out the intake and cata anyways so cata/intake performance probably decreases 10-20%
+    } else if (ptoCurrent == 8) { // this is for pushing power, but is really slow. you can't use cata or intake at all or rollers, but chassis is up to twice the pushing power of 6m drive and 3 times the pusing power of 4m drive. used rarely, mostly defending rollers. downside is that you move 3 times slower - which is why we only use in pushing battles where you never move at full speed anyways
+      int r = master.get_analog(ANALOG_LEFT_Y);
+      int l = master.get_analog(ANALOG_RIGHT_Y);
 
-  
-  
-  while (true) {
-    if(master.get_digital_new_press(DIGITAL_LEFT)) {
-			shootingMode = !shootingMode;
-			if(shootingMode == false) {
-				master.rumble("..");
-			} else {
-				master.rumble("-");
-			}
-		}
-    changer.set_value(master.get_digital(DIGITAL_RIGHT));
-    indexing = master.get_digital(DIGITAL_R1);
-    indexer.set_value(master.get_digital(DIGITAL_R1));
-    endgame.set_value(master.get_digital(DIGITAL_UP) && master.get_digital(DIGITAL_DOWN));
-    intakeMover.set_value(intakeMove);
-    if(master.get_digital_new_press(DIGITAL_Y)) {
-      intakeMove = !intakeMove;
-    }
-    if(master.get_digital(DIGITAL_R2)) {
-      intakeMove = true;
-      lastFly = pros::millis();
+      float pushR = (600-cata_right.get_actual_velocity())/3;
+      float pushL = (600-cata_left.get_actual_velocity())/3;
+      ptochassis.joy_thresh_opcontrol(r/3+pow(2.718281828,pushR*0.032),l/3+pow(2.718281828,pushL*0.032)); //power function added to 200rpm chassis, more pushing power. dangerous b/c chassis motors are spinning different speed, its fine when you are in a pushing battle w someone and moving slower than 200 rpm
+      
+      cata_right.move(r*600/127);
+      cata_left.move(l*600/127);
     }
 
-
-
-
-    if(!pto_enganged) { 
-      chassis.tank();
-    } else {
-      ptochassis.tank();
-    }
-    
-    if(master.get_digital(DIGITAL_L1)) {
-      pto_enganged = false;
-			pto.set_value(false);
-			intake_left.move_voltage(12000);
-			intake_right.move_voltage(12000);
-		} else if(master.get_digital(DIGITAL_L2)) {;;
-			pto_enganged = false;
-			pto.set_value(false);
-			intake_left.move_voltage(-12000);
-			intake_right.move_voltage(-12000);
-		} else if(!pto_enganged && !master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_R1)) {
-			intake_left.move(0);
-			intake_right.move(0);
-		}
-    if (master.get_digital(DIGITAL_B) == 1) {
-			pto.set_value(true);
-			pto_enganged = true;
-		} 
-    
-
-		flywheel_drive((-7750-shootingMode*1900)-(5500*indexing)-(6000*master.get_digital(DIGITAL_A)));
-    if(master.get_digital(DIGITAL_R1)) {
-      lastFly = pros::millis();
-      indexer.set_value(true);
-      intake_left.move_voltage(12000);
-      intake_right.move_voltage(12000);
-      intakeMove = true;
-    } 
-    if(lastFly+600<pros::millis()) {
-      intakeMove = false;
+    if(!master.get_digital(DIGITAL_L1)) {
+      cata_drive((ptoCurrent==4||ptoCurrent==6)*12000*(-cataPos+1+master.get_digital(DIGITAL_R1)));
+      cata_drive_secondary((ptoCurrent==4)*12000*(-cataPos+1+master.get_digital(DIGITAL_R1)));  //cata control -- cata moves back when limit switch is not activated or when user inputs R1
     }
 
-
-
-
+    if(!master.get_digital(DIGITAL_R1)&&cataPos) {
+      cata_drive((ptoCurrent==4||ptoCurrent==6)*-12000*master.get_digital(DIGITAL_L1));
+      cata_drive_secondary((ptoCurrent==4)*-12000*master.get_digital(DIGITAL_L1)); //while the cata is not moving, intake moves when user inputs L1
+    }
 
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME

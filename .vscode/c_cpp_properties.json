@@ -5,7 +5,8 @@
       "includePath": [
         "${workspaceFolder}/**",
         "/Users/seanyao/github/EZ-Template-main/include",
-        "/Users/seanyao/github/vex-spin-up-2023/include"
+        "/Users/seanyao/github/vex-spin-up-2023/include",
+        "/Users/seanyao/github/vex-spin-up-2023-new/include"
       ],
       "defines": [
         "_DEBUG",
@@ -16,13 +17,13 @@
       "cStandard": "c17",
       "cppStandard": "c++17",
       "intelliSenseMode": "gcc-arm",
-      "compileCommands": "/Users/seanyao/github/vex-spin-up-2023/compile_commands.json",
+      "compileCommands": "/Users/seanyao/github/vex-spin-up-2023-new/compile_commands.json",
       "macFrameworkPath": [
         "/System/Library/Frameworks"
       ],
       "browse": {
         "path": [
-          "/Users/seanyao/github/vex-spin-up-2023"
+          "/Users/seanyao/github/vex-spin-up-2023-new"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""

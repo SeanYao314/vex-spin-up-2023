@@ -244,8 +244,7 @@ void interfered_example() {
 // . . .
 
 void left_side_auton() {
-  chassis.set_drive_pid(2,DRIVE_SPEED);
-  flywheel_drive(-12000);
+
 }
 
 void right_side_auton() {
