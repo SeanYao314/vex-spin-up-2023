@@ -243,7 +243,32 @@ void interfered_example() {
 // Make your own autonomous functions here!
 // . . .
 
+void intake_drive(int speed) {
+
+}
 void left_side_auton() {
+    intakething(true);
+    chassis.set_drive_pid(43, 200, true);
+    chassis.wait_drive();
+
+    wing(true,false);
+    pros::delay(900);
+    chassis.set_turn_pid(90,50);
+    chassis.wait_drive();
+    wing(true,true);
+    chassis.set_drive_pid(30,300,true);
+    chassis.wait_drive();
+    chassis.set_drive_pid(-20,200,true);
+    chassis.wait_drive();
+    chassis.set_turn_pid(-80,60);
+
+    wing(false,false);
+    chassis.wait_drive();
+    intakething(false);
+    chassis.set_drive_pid(20,600,true);
+    chassis.wait_drive();
+    chassis.set_drive_pid(-20,200,true);
+
 
 }
 

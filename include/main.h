@@ -74,16 +74,15 @@ void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
 
-void flywheel_drive(int);
 
 
 void intake_drive(int);
-
-void indexer_drive(bool);
-
+void cata_drive(int);
+void cata_drive_secondary(int);
 void intake_move_drive(bool);
-
+void wing(bool, bool);
 void changer_drive(bool);
+void intakething(bool);
 #ifdef __cplusplus
 }
 #endif
