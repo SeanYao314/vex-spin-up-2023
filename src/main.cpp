@@ -5,14 +5,14 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {7,2,4,10}
+  {10,-9,-19, 2}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{-19,-18,-12,-14}
+  ,{-1,2,-11, 2}
 
   // IMU Port
-  ,16
+  ,5
 
   // Wheel Diameter (Remember, 4" wheels are actually 4.125!)
   //    (or tracking wheel diameter)
@@ -81,13 +81,12 @@ Drive chassis (
 void initialize() {
   // Print our branding over your terminal :D
   ez::print_ez_template();
-  
   pros::delay(500); // Stop the user from doing anything while legacy ports configure.
 
   // Configure your chassis controls
   chassis.toggle_modify_curve_with_controller(true); // Enables modifying the controller curve with buttons on the joysticks
   chassis.set_active_brake(0); // Sets the active brake kP. We recommend 0.1.
-  chassis.set_curve_default(0, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
+  chassis.set_curve_default(7.7, 0); // Defaults for curve. If using tank, only the first parameter is used. (Comment this line out if you have an SD card!)  
   default_constants(); // Set the drive to your own constants from autons.cpp!
 
   // These are already defaulted to these buttons, but you can change the left/right curve buttons here!
@@ -134,6 +133,7 @@ void disabled() {
  */
 void competition_initialize() {
   // . . .
+
 }
 
 
@@ -175,38 +175,58 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-pros::ADIDigitalOut intake('B');
-pros::ADIDigitalOut leftWing('A');
+pros::ADIDigitalOut intake1('A');
+pros::ADIDigitalOut intake2('B');
+pros::ADIDigitalOut leftWing('C');
 pros::ADIDigitalOut rightWing('D');
+pros::ADIDigitalOut climb('E');
 
+const int INTAKE_MOTOR = 8;
+pros::Motor intake(INTAKE_MOTOR, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
  
 void wing(bool left, bool right) {
   leftWing.set_value(left);
   rightWing.set_value(right);
 }
+
 void intakething(bool inta) {
-    intake.set_value(inta);
+  intake1.set_value(inta);
+  intake2.set_value(inta);
 }
 
-bool intakeBool = false;
+bool intakeBool = true;
 bool leftWingBool = false;
 bool rightWingBool = false;
 void opcontrol() {
   
   while(true) {
     chassis.tank();
-    intake.set_value(intakeBool);
+
+    intake1.set_value(intakeBool);
+    intake2.set_value(intakeBool);
     leftWing.set_value(leftWingBool);
     rightWing.set_value(rightWingBool);
 
-    if(master.get_digital_new_press(DIGITAL_L1)) {//intake
+    if(master.get_digital_new_press(DIGITAL_L2)) {//intake
       intakeBool = !intakeBool;
     }
-    if(master.get_digital_new_press(DIGITAL_R1)) {
+    if(master.get_digital(DIGITAL_L1)) {//intake
+      intake.move_voltage(12000);
+    } else if(master.get_digital(DIGITAL_R1)){
+      intake.move_voltage(-12000);
+    }
+    if(master.get_digital_new_press(DIGITAL_Y)) {
       leftWingBool = !leftWingBool;
+    }
+    if(master.get_digital_new_press(DIGITAL_DOWN)) {
       rightWingBool = !rightWingBool;
     }
+    if(master.get_digital_new_press(DIGITAL_B)) {
+      climb.set_value(true);
+    }
+
+
 
     pros::delay(ez::util::DELAY_TIME); // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }

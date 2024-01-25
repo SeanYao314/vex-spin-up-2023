@@ -247,31 +247,66 @@ void intake_drive(int speed) {
 
 }
 void left_side_auton() {
-    intakething(true);
-    chassis.set_drive_pid(43, 200, true);
-    chassis.wait_drive();
 
-    wing(true,false);
-    pros::delay(900);
-    chassis.set_turn_pid(90,50);
+    // intakething(false);
+    // chassis.set_drive_pid(2, 600, true);
+    // chassis.wait_drive();
+    // intakething(true); 
+
+    // pros::delay(900);
+    // chassis.set_drive_pid(-45,600,true);
+    // chassis.wait_drive();
+    // chassis.set_swing_pid(LEFT_SWING, -70, SWING_SPEED);
+    
+
+    // chassis.wait_drive();
+    // chassis.set_drive_pid(-20,300,true);
+
+    // chassis.set_swing_pid(LEFT_SWING,-110,SWING_SPEED);
+    // chassis.set_drive_pid(-20,200,true);
+    // chassis.wait_drive();
+    // chassis.set_drive_pid(20,300,true);
+
+    // chassis.set_swing_pid(LEFT_SWING,40,SWING_SPEED);
+
+    // chassis.set_turn_pid(90,TURN_SPEED);
+    // chassis.wait_drive();
+
+    // intakething(false);
+    // chassis.set_drive_pid(30,200,true);
+
+    // chassis.wait_drive();
+    // chassis.set_drive_pid(-20,200,true);
+    intakething(true);
+    pros::delay(500);
+    chassis.set_drive_pid(50,200,true);
     chassis.wait_drive();
     wing(true,true);
-    chassis.set_drive_pid(30,300,true);
-    chassis.wait_drive();
-    chassis.set_drive_pid(-20,200,true);
-    chassis.wait_drive();
-    chassis.set_turn_pid(-80,60);
+    chassis.set_turn_pid(810,200);
+    chassis.set_swing_pid(LEFT_SWING,80,true);
+    chassis.set_swing_pid(RIGHT_SWING,40,true);
 
+    chassis.wait_drive();
+    chassis.set_turn_pid(720,200);
+    chassis.wait_drive();
+    chassis.set_turn_pid(-90,200);
+    chassis.wait_drive();
     wing(false,false);
-    chassis.wait_drive();
     intakething(false);
-    chassis.set_drive_pid(20,600,true);
+    chassis.set_drive_pid(30,200,true);
     chassis.wait_drive();
-    chassis.set_drive_pid(-20,200,true);
+
+
+
 
 
 }
 
 void right_side_auton() {
+intakething(true);
+chassis.set_drive_pid(43, 200, true);
+chassis.wait_drive();
+
+
 
 }

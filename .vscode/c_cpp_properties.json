@@ -14,8 +14,8 @@
         "_UNICODE"
       ],
       "compilerPath": "/Users/seanyao/Library/Application Support/Code/User/globalStorage/sigbots.pros/install/pros-toolchain-macos/bin/arm-none-eabi-g++",
-      "cStandard": "c17",
-      "cppStandard": "c++17",
+      "cStandard": "gnu11",
+      "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
       "compileCommands": "/Users/seanyao/github/vex-spin-up-2023-new/compile_commands.json",
       "macFrameworkPath": [
