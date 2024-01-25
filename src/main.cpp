@@ -5,11 +5,11 @@
 Drive chassis (
   // Left Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  {10,-9,-19, 2}
+  {9,-8,-10, 20}
 
   // Right Chassis Ports (negative port will reverse it!)
   //   the first port is the sensored port (when trackers are not used!)
-  ,{-1,2,-11, 2}
+  ,{-1,3,-12, 7}
 
   // IMU Port
   ,5
@@ -175,13 +175,12 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-pros::ADIDigitalOut intake1('A');
-pros::ADIDigitalOut intake2('B');
-pros::ADIDigitalOut leftWing('C');
-pros::ADIDigitalOut rightWing('D');
-pros::ADIDigitalOut climb('E');
+pros::ADIDigitalOut intake1('C');
+pros::ADIDigitalOut leftWing('D');
+pros::ADIDigitalOut rightWing('A');
+pros::ADIDigitalOut climb('B');
 
-const int INTAKE_MOTOR = 8;
+const int INTAKE_MOTOR = 2;
 pros::Motor intake(INTAKE_MOTOR, pros::E_MOTOR_GEARSET_06, false, pros::E_MOTOR_ENCODER_DEGREES);
 
  
@@ -192,7 +191,6 @@ void wing(bool left, bool right) {
 
 void intakething(bool inta) {
   intake1.set_value(inta);
-  intake2.set_value(inta);
 }
 
 bool intakeBool = true;
@@ -204,7 +202,6 @@ void opcontrol() {
     chassis.tank();
 
     intake1.set_value(intakeBool);
-    intake2.set_value(intakeBool);
     leftWing.set_value(leftWingBool);
     rightWing.set_value(rightWingBool);
 
@@ -212,9 +209,9 @@ void opcontrol() {
       intakeBool = !intakeBool;
     }
     if(master.get_digital(DIGITAL_L1)) {//intake
-      intake.move_voltage(12000);
-    } else if(master.get_digital(DIGITAL_R1)){
       intake.move_voltage(-12000);
+    } else if(master.get_digital(DIGITAL_R1)){
+      intake.move_voltage(12000);
     }
     if(master.get_digital_new_press(DIGITAL_Y)) {
       leftWingBool = !leftWingBool;
