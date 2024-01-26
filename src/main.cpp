@@ -212,11 +212,13 @@ void opcontrol() {
       intake.move_voltage(-12000);
     } else if(master.get_digital(DIGITAL_R1)){
       intake.move_voltage(12000);
+    } else {
+      intake.move_voltage(0);
     }
     if(master.get_digital_new_press(DIGITAL_Y)) {
       leftWingBool = !leftWingBool;
     }
-    if(master.get_digital_new_press(DIGITAL_DOWN)) {
+    if(master.get_digital_new_press(DIGITAL_RIGHT)) {
       rightWingBool = !rightWingBool;
     }
     if(master.get_digital_new_press(DIGITAL_B)) {
